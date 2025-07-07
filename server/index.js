@@ -3,10 +3,10 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
-const { customAlphabet, nanoid } = require('nanoid');
-const HrMiddleware = require('./src/middleware/HrMiddleware');
 const connectDb = require('./src/config/db');
 const User = require('./src/models/userSchema');
+const ScheduleRouter = require("./src/routes/Schedule");
+const CandidateJoinRouter = require("./src/routes/CandidateJoinRouter.js");
 
 
 const PORT = process.env.PORT || 8000;
@@ -45,11 +45,8 @@ app.post('/checkUser', async (req, res) => {
 
 
 
-app.post('/createSchedule',HrMiddleware, (req, res) => {
-    const NanoId = customAlphabet('0123456789abcdef1234567890ghijklmnopqrstuvwxyz', 7);
-    const roomId = NanoId();
-    res.status(201).send({ roomId: roomId });
-});
+app.use('/api/', ScheduleRouter);
+app.use('/api/', CandidateJoinRouter);
 
 
 app.post('/signup', async (req, res) => {
@@ -79,7 +76,7 @@ io.on('connection', socket => {
         socket.emit('all-users', usersInRoom(roomId).filter(id => id !== socket.id));
         socket.to(roomId).emit('user-connected', socket.id);
 
-        console.log(`👤 ${socket.id} joined ${roomId}`);
+        console.log(`${socket.id} joined ${roomId}`);
     });
     socket.on('send-offer', ({ targetId, offer }) =>
         io.to(targetId).emit('receive-offer', { from: socket.id, offer }));

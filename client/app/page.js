@@ -1,15 +1,16 @@
 "use client";
 import React from "react";
-import Hero from "./components/LandingPage/Hero";
-import {useUser} from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
+// import Home from "./pages/Home";
+import CandidatePortal from "./pages/CandidateHome";
+
+
+
 const page = () => {
-  // const {isSignedIn} = useUser();
+  const { isSignedIn, user } = useUser();
   return (
     <>
-      {/* {
-        isSignedIn ?<div>kuchh bhi</div> : <div><Hero /></div>
-      } */}
-      <Hero />
+      <CandidatePortal />
     </>
   );
 };
